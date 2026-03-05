@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self';">
+    <meta name="referrer" content="no-referrer">
+    <meta http-equiv="X-DNS-Prefetch-Control" content="off">
+    <title>Dragon's Gambit — Checkers</title>
+    <meta name="description" content="An epic dragon-themed two-player checkers game. Fire vs Ice!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=MedievalSharp&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- PARTICLE CANVAS -->
+    <canvas id="particles"></canvas>
+
+    <!-- ===== SPLASH / NAME ENTRY SCREEN ===== -->
+    <div id="splash-screen" class="screen active">
+        <div class="splash-content">
+            <h1 class="game-title">Dragon's Gambit</h1>
+            <p class="game-subtitle">A Battle of Fire &amp; Ice</p>
+
+            <div class="player-setup">
+                <div class="player-card fire-card">
+                    <img src="images/fire_dragon.png" alt="Fire Dragon" class="dragon-avatar">
+                    <h2 class="player-label fire-text">🔥 Fire Dragon</h2>
+                    <input type="text" id="fire-name" class="name-input fire-input" placeholder="Enter dragon name..."
+                        maxlength="20" value="Emberclaw">
+                </div>
+                <div class="vs-divider">
+                    <span>VS</span>
+                </div>
+                <div class="player-card ice-card">
+                    <img src="images/ice_dragon.png" alt="Ice Dragon" class="dragon-avatar">
+                    <h2 class="player-label ice-text">❄️ Ice Dragon</h2>
+                    <input type="text" id="ice-name" class="name-input ice-input" placeholder="Enter dragon name..."
+                        maxlength="20" value="Frostfang">
+                </div>
+            </div>
+
+            <details class="how-to-play">
+                <summary>📜 How to Play</summary>
+                <div class="rules-content">
+                    <ul>
+                        <li><strong>Move</strong> — Click your piece, then click a highlighted square to move diagonally
+                            forward.</li>
+                        <li><strong>Capture</strong> — Jump over an opponent's piece to capture it. If you can jump,
+                            <em>you must</em>.
+                        </li>
+                        <li><strong>Multi-Jump</strong> — If another jump is available after capturing, you must
+                            continue jumping.</li>
+                        <li><strong>King Me</strong> — Reach the opposite end to become a King 👑 and move in all
+                            directions.</li>
+                        <li><strong>Win</strong> — Capture all enemy pieces or block them from moving!</li>
+                    </ul>
+                </div>
+            </details>
+
+            <button id="start-btn" class="btn-start" onclick="startGame()">
+                ⚔️ Begin Battle
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== GAME SCREEN ===== -->
+    <div id="game-screen" class="screen">
+        <header class="game-header">
+            <div class="player-info fire-side">
+                <img src="images/fire_dragon.png" alt="Fire Dragon" class="header-avatar">
+                <div class="player-details">
+                    <span id="fire-player-name" class="player-name fire-text">Emberclaw</span>
+                    <span class="piece-count">Pieces: <span id="fire-pieces">12</span></span>
+                </div>
+                <div id="fire-turn-indicator" class="turn-indicator">YOUR TURN</div>
+            </div>
+
+            <div class="game-center-info">
+                <h1 class="header-title">Dragon's Gambit</h1>
+                <div id="game-status" class="game-status">Fire moves first</div>
+            </div>
+
+            <div class="player-info ice-side">
+                <div id="ice-turn-indicator" class="turn-indicator">WAITING</div>
+                <div class="player-details right-aligned">
+                    <span id="ice-player-name" class="player-name ice-text">Frostfang</span>
+                    <span class="piece-count">Pieces: <span id="ice-pieces">12</span></span>
+                </div>
+                <img src="images/ice_dragon.png" alt="Ice Dragon" class="header-avatar">
+            </div>
+        </header>
+
+        <main class="game-main">
+            <div id="hint-bar" class="hint-bar">
+                <span id="hint-icon">💡</span>
+                <span id="hint-text">Click one of your pieces to select it</span>
+            </div>
+            <div class="board-container">
+                <div id="board" class="board"></div>
+            </div>
+        </main>
+
+        <footer class="game-footer">
+            <button class="btn-action" onclick="resetGame()">🔄 New Battle</button>
+            <div id="captured-fire" class="captured-area">
+                <span class="captured-label ice-text">❄️ Captured:</span>
+                <div id="captured-fire-pieces" class="captured-pieces"></div>
+            </div>
+            <div id="captured-ice" class="captured-area">
+                <span class="captured-label fire-text">🔥 Captured:</span>
+                <div id="captured-ice-pieces" class="captured-pieces"></div>
+            </div>
+            <button class="btn-action" onclick="undoMove()">↩️ Undo</button>
+        </footer>
+    </div>
+
+    <!-- ===== VICTORY OVERLAY ===== -->
+    <div id="victory-modal" class="modal-overlay">
+        <!-- Dragon fly-in animation -->
+        <div id="victory-dragon" class="victory-dragon">
+            <img id="victory-dragon-img" src="images/fire_dragon.png" alt="Victory Dragon" class="victory-dragon-img">
+        </div>
+        <!-- Breath effect canvas -->
+        <canvas id="breath-canvas" class="breath-canvas"></canvas>
+        <!-- Victory text -->
+        <div class="modal-content victory-content">
+            <h2 id="victory-title" class="victory-title">Victory!</h2>
+            <p id="victory-message" class="victory-message"></p>
+            <div class="modal-buttons">
+                <button class="btn-action" onclick="resetGame()">⚔️ Rematch</button>
+                <button class="btn-action" onclick="backToSplash()">🏠 Main Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>
