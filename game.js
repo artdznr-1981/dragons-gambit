@@ -679,3 +679,4 @@ function updateCapturedDisplay() {
     }
     animate();
 })();
+document.getElementById('start-btn').addEventListener('click', startGame);
