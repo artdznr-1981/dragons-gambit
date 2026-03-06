@@ -680,3 +680,6 @@ function updateCapturedDisplay() {
     animate();
 })();
 document.getElementById('start-btn').addEventListener('click', startGame);
+document.getElementById('rematch-btn').addEventListener('click', resetGame);
+document.getElementById('menu-btn').addEventListener('click', backToSplash);
+
