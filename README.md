@@ -35,12 +35,17 @@ No install required — just open the file in your browser:
 
 ```
 checkers-game/
-├── index.html   ← open this in your browser
+├── index.html        ← open this in your browser
 ├── game.js
 ├── style.css
 └── images/
-    ├── fire_dragon.png
-    └── ice_dragon.png
+    ├── fire_dragon.png   ← Fire player avatar
+    ├── ice_dragon.png    ← Ice player avatar
+    ├── fire_piece.png    ← Fire checker piece texture
+    ├── ice_piece.png     ← Ice checker piece texture
+    ├── stone_board.png   ← Board texture
+    ├── forest_bg.png     ← Background scene
+    └── screenshot.png    ← Gameplay preview (shown in README)
 ```
 
 Simply double-click `index.html` or drag it into any modern browser (Chrome, Edge, Firefox).
