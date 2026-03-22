@@ -1027,6 +1027,40 @@ body::before {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+/* Group New Battle + Menu button together */
+.footer-left-btns {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Menu button — subtle distinction from New Battle */
+.btn-menu {
+    border-color: rgba(255, 215, 0, 0.2);
+    color: rgba(255, 215, 0, 0.7);
+}
+
+.btn-menu:hover {
+    border-color: rgba(255, 215, 0, 0.5);
+    color: #ffd700;
+    background: rgba(255, 215, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.15);
+}
+
+/* Random icon 🔥❄️ — alternating glow animation */
+.random-icon {
+    display: inline-block;
+    animation: randomFlicker 2s ease-in-out infinite;
+}
+
+@keyframes randomFlicker {
+    0%   { filter: drop-shadow(0 0 3px rgba(255, 80, 0, 0.8));  }
+    45%  { filter: drop-shadow(0 0 5px rgba(255, 80, 0, 0.8));  }
+    50%  { filter: drop-shadow(0 0 5px rgba(0, 200, 255, 0.8)); }
+    95%  { filter: drop-shadow(0 0 3px rgba(0, 200, 255, 0.8)); }
+    100% { filter: drop-shadow(0 0 3px rgba(255, 80, 0, 0.8));  }
+}
+
 .captured-area {
     display: flex;
     align-items: center;
