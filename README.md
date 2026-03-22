@@ -1,70 +1,1539 @@
-# 🐉 Dragon's Gambit — A Battle of Fire & Ice
+/* ============================================
+   DRAGON'S GAMBIT — STYLE SYSTEM
+   Fire vs Ice Checkers
+   ============================================ */
 
-> A dragon-themed two-player checkers game built with pure HTML, CSS, and JavaScript. No frameworks. No dependencies. Just epic battles.
+/* --- CSS Variables / Design Tokens --- */
+:root {
+    /* Base */
+    --bg-dark: #0a0a0f;
+    --bg-card: rgba(15, 15, 25, 0.85);
+    --bg-glass: rgba(20, 20, 35, 0.6);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --text-primary: #e8e6e3;
+    --text-secondary: #8a8a9a;
 
----
+    /* Fire colors */
+    --fire-primary: #ff4500;
+    --fire-glow: #ff6a00;
+    --fire-ember: #cc3700;
+    --fire-dark: #8b1a00;
+    --fire-shadow: rgba(255, 69, 0, 0.5);
+    --fire-shadow-soft: rgba(255, 69, 0, 0.25);
 
-## 🎮 What Is It?
+    /* Ice colors */
+    --ice-primary: #00d4ff;
+    --ice-glow: #00eaff;
+    --ice-crystal: #0099cc;
+    --ice-dark: #005577;
+    --ice-shadow: rgba(0, 212, 255, 0.5);
+    --ice-shadow-soft: rgba(0, 212, 255, 0.25);
 
-**Dragon's Gambit** is a fully playable checkers game played in the browser. Two players choose their dragon names — one commands the **🔥 Fire Dragons**, the other the **❄️ Ice Dragons** — and battle head-to-head on an 8×8 board.
+    /* Board */
+    --board-light: #2a2520;
+    --board-dark: #1a1510;
+    --board-border: #3a3025;
+    --board-highlight: rgba(255, 215, 0, 0.3);
+    --board-valid: rgba(255, 215, 0, 0.15);
 
-## ✨ Features
+    /* Fonts */
+    --font-display: 'Cinzel', serif;
+    --font-fantasy: 'MedievalSharp', cursive;
+    --font-body: 'Inter', sans-serif;
+}
 
-- 🐉 **Dragon-themed UI** — custom dragon avatars, fire & ice color schemes, animated particle effects
-- 👑 **Full checkers rules** — forced jumps, multi-jumps, and kinging
-- 💡 **Hint bar** — guides new players through their turn
-- ↩️ **Undo move** — take back your last move
-- 🏆 **Victory screen** — animated dragon fly-in with a dramatic victory message
-- 🔒 **Security headers** — Content Security Policy baked in
-- 📱 **Responsive** — playable on desktop and mobile
+/* --- Reset & Base --- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-## 🕹️ How to Play
+html,
+body {
+    height: 100%;
+    overflow: auto;
+}
 
-| Action | How |
-|---|---|
-| **Select a piece** | Click one of your colored pieces |
-| **Move** | Click a highlighted square to move diagonally forward |
-| **Capture** | Jump over an opponent's piece to remove it — *you must jump if you can* |
-| **Multi-jump** | If another jump is available after capturing, keep jumping |
-| **King** | Reach the opposite end of the board to become a King 👑 — kings move in all directions |
-| **Win** | Capture all enemy pieces, or block them so they can't move |
+body {
+    font-family: var(--font-body);
+    background: var(--bg-dark);
+    background-image: url('images/forest_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
-## 🚀 Running Locally
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(ellipse at 5% 50%, rgba(255, 80, 0, 0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 95% 50%, rgba(0, 160, 255, 0.2) 0%, transparent 50%),
+        rgba(0, 0, 0, 0.9);
+    pointer-events: none;
+    z-index: 0;
+}
 
-No install required — just open the file in your browser:
+#particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
 
-```
-checkers-game/
-├── index.html        ← open this in your browser
-├── game.js
-├── style.css
-└── images/
-    ├── fire_dragon.png   ← Fire player avatar
-    ├── ice_dragon.png    ← Ice player avatar
-    ├── fire_piece.png    ← Fire checker piece texture
-    ├── ice_piece.png     ← Ice checker piece texture
-    ├── stone_board.png   ← Board texture
-    ├── forest_bg.png     ← Background scene
-    └── screenshot.png    ← Gameplay preview (shown in README)
-```
+/* ============================
+   SCREENS
+   ============================ */
+.screen {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
 
-Simply double-click `index.html` or drag it into any modern browser (Chrome, Edge, Firefox).
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
-## 🛠️ Tech Stack
+/* ============================
+   SPLASH SCREEN
+   ============================ */
+.splash-content {
+    text-align: center;
+    max-width: 900px;
+    width: 90%;
+    animation: fadeInUp 0.8s ease-out;
+}
 
-| Layer | Technology |
-|---|---|
-| Structure | HTML5 |
-| Styling | CSS3 (custom animations, glassmorphism, Google Fonts — Cinzel) |
-| Logic | Vanilla JavaScript (ES6+) |
-| No build step | ✅ Zero dependencies |
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
 
-## 📸 Screenshots
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-![Dragon's Gambit — Fire vs Ice gameplay](images/screenshot.png)
+.game-title {
+    font-family: var(--font-display);
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, var(--fire-glow), #ffd700, var(--ice-glow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    margin-bottom: 0.2em;
+    text-transform: uppercase;
+}
 
-> Emberclaw (🔥 Fire) vs Frostfang (❄️ Ice) — may the best dragon win!
+.game-subtitle {
+    font-family: var(--font-fantasy);
+    font-size: 1.4rem;
+    color: var(--text-secondary);
+    margin-bottom: 2em;
+    letter-spacing: 2px;
+}
 
-## 📜 License
+.player-setup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2.5em;
+    flex-wrap: wrap;
+}
 
-MIT — free to use, share, and modify.
+.player-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 1.5rem;
+    width: 280px;
+    backdrop-filter: blur(20px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.player-card:hover {
+    transform: translateY(-4px);
+}
+
+.fire-card:hover {
+    box-shadow: 0 8px 40px var(--fire-shadow-soft);
+}
+
+.ice-card:hover {
+    box-shadow: 0 8px 40px var(--ice-shadow-soft);
+}
+
+.dragon-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid var(--border-subtle);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fire-card .dragon-avatar {
+    border-color: var(--fire-ember);
+    box-shadow: 0 0 20px var(--fire-shadow-soft);
+}
+
+.ice-card .dragon-avatar {
+    border-color: var(--ice-crystal);
+    box-shadow: 0 0 20px var(--ice-shadow-soft);
+}
+
+.player-label {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.fire-text {
+    color: var(--fire-glow);
+}
+
+.ice-text {
+    color: var(--ice-glow);
+}
+
+.name-input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fire-input:focus {
+    border-color: var(--fire-primary);
+    box-shadow: 0 0 15px var(--fire-shadow-soft);
+}
+
+.ice-input:focus {
+    border-color: var(--ice-primary);
+    box-shadow: 0 0 15px var(--ice-shadow-soft);
+}
+
+.vs-divider {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 900;
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    padding: 0 0.5rem;
+}
+
+/* Who Goes First */
+.first-turn-selector {
+    margin-bottom: 1.8em;
+    text-align: center;
+    padding: 1.2rem 1.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 215, 0, 0.15);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.first-turn-label {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: rgba(255, 215, 0, 0.8);
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    display: block;
+}
+
+.first-turn-options {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.first-turn-option {
+    cursor: pointer;
+}
+
+.first-turn-option input[type="radio"] {
+    display: none;
+}
+
+.option-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 50px;
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.35);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.option-pill::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.fire-pill::before  { background: radial-gradient(ellipse at center, rgba(255, 80, 0, 0.18) 0%, transparent 70%); }
+.random-pill::before { background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.18) 0%, transparent 70%); }
+.ice-pill::before   { background: radial-gradient(ellipse at center, rgba(0, 200, 255, 0.18) 0%, transparent 70%); }
+
+.first-turn-option:hover .option-pill {
+    transform: translateY(-2px) scale(1.04);
+    color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.first-turn-option:hover .option-pill::before {
+    opacity: 1;
+}
+
+/* Checked states */
+.first-turn-option input[type="radio"]:checked + .fire-pill {
+    background: linear-gradient(135deg, rgba(180, 30, 0, 0.5), rgba(255, 80, 0, 0.25));
+    border-color: var(--fire-primary);
+    color: #ff7a3d;
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.45), inset 0 0 12px rgba(255, 80, 0, 0.15);
+    transform: translateY(-2px) scale(1.06);
+    animation: firePillGlow 1.8s ease-in-out infinite alternate;
+}
+
+.first-turn-option input[type="radio"]:checked + .random-pill {
+    background: linear-gradient(135deg, rgba(140, 110, 0, 0.5), rgba(255, 215, 0, 0.2));
+    border-color: #ffd700;
+    color: #ffe066;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 0 12px rgba(255, 215, 0, 0.1);
+    transform: translateY(-2px) scale(1.06);
+    animation: goldPillGlow 1.8s ease-in-out infinite alternate;
+}
+
+.first-turn-option input[type="radio"]:checked + .ice-pill {
+    background: linear-gradient(135deg, rgba(0, 80, 120, 0.5), rgba(0, 200, 255, 0.2));
+    border-color: var(--ice-primary);
+    color: #5aecff;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.45), inset 0 0 12px rgba(0, 200, 255, 0.15);
+    transform: translateY(-2px) scale(1.06);
+    animation: icePillGlow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes firePillGlow {
+    from { box-shadow: 0 0 20px rgba(255, 69, 0, 0.45), inset 0 0 12px rgba(255, 80, 0, 0.15); }
+    to   { box-shadow: 0 0 32px rgba(255, 69, 0, 0.7),  inset 0 0 18px rgba(255, 100, 0, 0.25); }
+}
+
+@keyframes goldPillGlow {
+    from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4),  inset 0 0 12px rgba(255, 215, 0, 0.1); }
+    to   { box-shadow: 0 0 32px rgba(255, 215, 0, 0.65), inset 0 0 18px rgba(255, 215, 0, 0.2); }
+}
+
+@keyframes icePillGlow {
+    from { box-shadow: 0 0 20px rgba(0, 212, 255, 0.45), inset 0 0 12px rgba(0, 200, 255, 0.15); }
+    to   { box-shadow: 0 0 32px rgba(0, 212, 255, 0.7),  inset 0 0 18px rgba(0, 200, 255, 0.25); }
+}
+
+.btn-start {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 1rem 3rem;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(135deg, var(--fire-ember), #8b4513, var(--ice-dark));
+    box-shadow: 0 4px 30px rgba(255, 100, 0, 0.3), 0 4px 30px rgba(0, 150, 255, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.btn-start:hover {
+    transform: scale(1.06);
+    box-shadow: 0 6px 40px rgba(255, 100, 0, 0.5), 0 6px 40px rgba(0, 150, 255, 0.5);
+}
+
+/* How to Play */
+.how-to-play {
+    margin-bottom: 2em;
+    text-align: left;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.how-to-play summary {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffd700;
+    cursor: pointer;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    text-align: center;
+    transition: background 0.2s ease;
+    list-style: none;
+}
+
+.how-to-play summary::-webkit-details-marker {
+    display: none;
+}
+
+.how-to-play summary:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.rules-content {
+    margin-top: 0.8rem;
+    padding: 1rem 1.2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    backdrop-filter: blur(20px);
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.rules-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.rules-content li {
+    padding: 0.4rem 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.rules-content li:last-child {
+    border-bottom: none;
+}
+
+.rules-content strong {
+    color: var(--text-primary);
+}
+
+.rules-content em {
+    color: #ffd700;
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* Hint bar */
+.hint-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    margin-bottom: 1rem;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    backdrop-filter: blur(15px);
+    font-family: var(--font-fantasy);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    min-height: 36px;
+    transition: all 0.3s ease;
+}
+
+.hint-bar.fire-hint {
+    border-color: rgba(255, 69, 0, 0.2);
+    color: var(--fire-glow);
+}
+
+.hint-bar.ice-hint {
+    border-color: rgba(0, 212, 255, 0.2);
+    color: var(--ice-glow);
+}
+
+/* ============================
+   GAME HEADER
+   ============================ */
+.game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1.5rem;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-subtle);
+    backdrop-filter: blur(20px);
+    width: 100%;
+    z-index: 2;
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.header-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-subtle);
+}
+
+.fire-side .header-avatar {
+    border-color: var(--fire-ember);
+    box-shadow: 0 0 12px var(--fire-shadow-soft);
+}
+
+.ice-side .header-avatar {
+    border-color: var(--ice-crystal);
+    box-shadow: 0 0 12px var(--ice-shadow-soft);
+}
+
+.player-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.player-details.right-aligned {
+    text-align: right;
+}
+
+.player-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.piece-count {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.turn-indicator {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.25rem 0.7rem;
+    border-radius: 8px;
+    letter-spacing: 1.5px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    transition: all 0.4s ease;
+}
+
+.turn-indicator.active-fire {
+    background: var(--fire-primary);
+    color: #fff;
+    box-shadow: 0 0 20px var(--fire-shadow);
+    animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+.turn-indicator.active-ice {
+    background: var(--ice-primary);
+    color: #0a0a0f;
+    box-shadow: 0 0 20px var(--ice-shadow);
+    animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.game-center-info {
+    text-align: center;
+}
+
+.header-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--fire-glow), #ffd700, var(--ice-glow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.game-status {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-family: var(--font-fantasy);
+}
+
+/* ============================
+   GAME BOARD
+   ============================ */
+.game-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.5rem;
+}
+
+.board-container {
+    position: relative;
+    padding: 14px;
+    background: url('images/stone_board.png') center/cover no-repeat, linear-gradient(145deg, #3a3228, #252018);
+    border: none;
+    box-shadow:
+        0 0 30px rgba(0, 0, 0, 0.8),
+        0 10px 50px rgba(0, 0, 0, 0.6),
+        inset 0 0 25px rgba(0, 0, 0, 0.4);
+    filter: drop-shadow(0 0 3px rgba(180, 170, 150, 0.5)) drop-shadow(0 0 8px rgba(120, 110, 90, 0.3));
+    /* Jagged rough stone edge using clip-path */
+    clip-path: polygon(2% 0%, 5% 1%, 8% 0%, 12% 1.5%, 16% 0%, 20% 0.8%, 25% 0%, 30% 1.2%, 35% 0%, 38% 0.5%,
+            42% 0%, 45% 1%, 48% 0%, 52% 0.8%, 55% 0%, 58% 1.5%, 62% 0%, 65% 0.6%, 68% 0%, 72% 1%,
+            75% 0%, 78% 0.5%, 82% 0%, 85% 1.2%, 88% 0%, 92% 0.8%, 95% 0%, 98% 1%, 100% 0%,
+            100% 2%, 99% 5%, 100% 8%, 99% 12%, 100% 16%, 99.2% 20%, 100% 25%, 99% 30%, 100% 35%,
+            99.5% 40%, 100% 45%, 99% 50%, 100% 55%, 99.2% 60%, 100% 65%, 99% 70%, 100% 75%,
+            99.5% 80%, 100% 85%, 99% 90%, 100% 95%, 100% 98%, 99% 100%,
+            98% 100%, 95% 99%, 92% 100%, 88% 99%, 85% 100%, 82% 99.2%, 78% 100%, 75% 99%,
+            72% 100%, 68% 99.5%, 65% 100%, 62% 99%, 58% 100%, 55% 99.2%, 52% 100%, 48% 99%,
+            45% 100%, 42% 99.5%, 38% 100%, 35% 99%, 30% 100%, 25% 99.2%, 20% 100%, 16% 99%,
+            12% 100%, 8% 99.5%, 5% 100%, 2% 99%, 0% 100%,
+            0% 98%, 1% 95%, 0% 92%, 1% 88%, 0% 85%, 0.8% 80%, 0% 75%, 1% 70%, 0% 65%,
+            0.5% 60%, 0% 55%, 1% 50%, 0% 45%, 0.8% 40%, 0% 35%, 1% 30%, 0% 25%,
+            0.5% 20%, 0% 16%, 1% 12%, 0% 8%, 0.5% 5%, 0% 2%);
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: min(78vh, 85vw, 680px);
+    height: min(78vh, 85vw, 680px);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: default;
+    transition: background 0.2s ease;
+    overflow: visible;
+    user-select: none;
+    -webkit-user-select: none;
+    z-index: 0;
+}
+
+.cell.light {
+    background: rgba(160, 145, 120, 0.5);
+}
+
+.cell.dark {
+    background: rgba(10, 8, 5, 0.65);
+}
+
+.cell.dark.valid-move {
+    cursor: pointer;
+    background: var(--board-valid);
+}
+
+.cell.dark.valid-move::after {
+    content: '';
+    width: 30%;
+    height: 30%;
+    border-radius: 50%;
+    background: rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+    animation: dotPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
+}
+
+.cell.dark.valid-jump {
+    cursor: pointer;
+    background: rgba(255, 50, 50, 0.15);
+}
+
+.cell.dark.valid-jump::after {
+    content: '';
+    width: 30%;
+    height: 30%;
+    border-radius: 50%;
+    background: rgba(255, 50, 50, 0.5);
+    box-shadow: 0 0 15px rgba(255, 50, 50, 0.4);
+    animation: dotPulse 0.8s ease-in-out infinite;
+}
+
+/* ============================
+   PIECES — FIRE (Embers)
+   ============================ */
+.piece {
+    width: 78%;
+    height: 78%;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.3s ease;
+    z-index: 10;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.piece:hover {
+    transform: scale(1.1);
+}
+
+.piece.selected {
+    transform: scale(1.15);
+}
+
+/* FIRE PIECE — Realistic ember texture */
+.piece.fire {
+    background: url('images/fire_piece.png') center/cover no-repeat;
+    border: none;
+    box-shadow:
+        inset 0 0 16px rgba(255, 60, 0, 0.7),
+        0 0 10px rgba(255, 40, 0, 0.8),
+        0 0 22px rgba(220, 20, 0, 0.5),
+        0 0 38px rgba(180, 0, 0, 0.25);
+    animation: fireIdle 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes fireIdle {
+    from {
+        box-shadow:
+            inset 0 0 16px rgba(255, 60, 0, 0.7),
+            0 0 10px rgba(255, 40, 0, 0.8),
+            0 0 22px rgba(220, 20, 0, 0.5),
+            0 0 38px rgba(180, 0, 0, 0.25);
+    }
+
+    to {
+        box-shadow:
+            inset 0 0 22px rgba(255, 80, 0, 0.8),
+            0 0 14px rgba(255, 60, 0, 0.9),
+            0 0 30px rgba(230, 30, 0, 0.6),
+            0 0 48px rgba(200, 0, 0, 0.3);
+    }
+}
+
+.piece.fire.selected {
+    box-shadow:
+        inset 0 0 28px rgba(255, 80, 0, 0.9),
+        0 0 18px rgba(255, 70, 0, 1),
+        0 0 35px rgba(240, 30, 0, 0.7),
+        0 0 55px rgba(200, 0, 0, 0.35);
+    animation: fireFlicker 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes fireFlicker {
+    from {
+        box-shadow:
+            inset 0 0 28px rgba(255, 80, 0, 0.9),
+            0 0 18px rgba(255, 70, 0, 1),
+            0 0 35px rgba(240, 30, 0, 0.7),
+            0 0 55px rgba(200, 0, 0, 0.35);
+    }
+
+    to {
+        box-shadow:
+            inset 0 0 34px rgba(255, 90, 0, 1),
+            0 0 22px rgba(255, 80, 0, 1),
+            0 0 42px rgba(250, 40, 0, 0.8),
+            0 0 65px rgba(220, 0, 0, 0.4);
+    }
+}
+
+
+/* ICE PIECE — Realistic frozen crystal texture */
+.piece.ice {
+    background: url('images/ice_piece.png') center/cover no-repeat;
+    border: none;
+    box-shadow:
+        inset 0 0 14px rgba(150, 240, 255, 0.45),
+        0 0 8px rgba(0, 180, 255, 0.55),
+        0 0 16px rgba(0, 120, 255, 0.25);
+    animation: iceIdle 2s ease-in-out infinite alternate;
+}
+
+
+
+@keyframes icicleShimmer {
+    0% {
+        opacity: 0.5;
+        transform: scaleY(0.8);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: scaleY(1.05);
+    }
+
+    100% {
+        opacity: 0.65;
+        transform: scaleY(0.9);
+    }
+}
+
+@keyframes iceIdle {
+    from {
+        box-shadow:
+            inset 0 0 14px rgba(150, 240, 255, 0.45),
+            0 0 8px rgba(0, 180, 255, 0.55),
+            0 0 16px rgba(0, 120, 255, 0.25);
+    }
+
+    to {
+        box-shadow:
+            inset 0 0 20px rgba(200, 250, 255, 0.55),
+            0 0 12px rgba(0, 200, 255, 0.65),
+            0 0 24px rgba(0, 140, 255, 0.35);
+    }
+}
+
+.piece.ice.selected {
+    box-shadow:
+        inset 0 0 24px rgba(220, 255, 255, 0.65),
+        0 0 14px rgba(0, 210, 255, 0.75),
+        0 0 30px rgba(0, 150, 255, 0.45);
+    animation: iceShimmer 0.5s ease-in-out infinite alternate;
+}
+
+
+@keyframes iceShimmer {
+    from {
+        box-shadow:
+            inset 0 0 24px rgba(220, 255, 255, 0.65),
+            0 0 14px rgba(0, 210, 255, 0.75),
+            0 0 30px rgba(0, 150, 255, 0.45);
+    }
+
+    to {
+        box-shadow:
+            inset 0 0 30px rgba(240, 255, 255, 0.75),
+            0 0 18px rgba(0, 230, 255, 0.85),
+            0 0 38px rgba(0, 170, 255, 0.5);
+    }
+}
+
+@keyframes icicleShimmerIntense {
+    0% {
+        opacity: 0.7;
+        transform: scaleY(1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scaleY(1.2);
+    }
+}
+
+/* KING CROWN */
+.piece.king::after {
+    content: '👑';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.4em;
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8));
+    animation: crownFloat 2s ease-in-out infinite;
+}
+
+@keyframes crownFloat {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%);
+    }
+
+    50% {
+        transform: translate(-50%, -55%);
+    }
+}
+
+/* Piece captured animation */
+.piece.captured {
+    animation: pieceCaptured 0.5s ease-out forwards;
+}
+
+@keyframes pieceCaptured {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.4);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+/* Piece move animation */
+.piece.moving {
+    transition: none;
+    animation: piecePlace 0.3s ease-out;
+}
+
+@keyframes piecePlace {
+    0% {
+        transform: scale(0.5);
+        opacity: 0.5;
+    }
+
+    70% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* King promotion animation */
+.piece.promoting {
+    animation: kingPromotion 0.8s ease-out;
+}
+
+@keyframes kingPromotion {
+    0% {
+        transform: scale(1);
+    }
+
+    30% {
+        transform: scale(1.3);
+    }
+
+    50% {
+        transform: scale(1.3) rotate(10deg);
+    }
+
+    70% {
+        transform: scale(1.3) rotate(-10deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* ============================
+   GAME FOOTER
+   ============================ */
+.game-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1.5rem;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-subtle);
+    backdrop-filter: blur(20px);
+    width: 100%;
+    gap: 1rem;
+}
+
+.btn-action {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.5rem 1.2rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    background: var(--bg-glass);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-action:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Group New Battle + Menu button together */
+.footer-left-btns {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Menu button — subtle distinction from New Battle */
+.btn-menu {
+    border-color: rgba(255, 215, 0, 0.2);
+    color: rgba(255, 215, 0, 0.7);
+}
+
+.btn-menu:hover {
+    border-color: rgba(255, 215, 0, 0.5);
+    color: #ffd700;
+    background: rgba(255, 215, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.15);
+}
+
+/* Random icon 🔥❄️ — alternating glow animation */
+.random-icon {
+    display: inline-block;
+    animation: randomFlicker 2s ease-in-out infinite;
+}
+
+@keyframes randomFlicker {
+    0%   { filter: drop-shadow(0 0 3px rgba(255, 80, 0, 0.8));  }
+    45%  { filter: drop-shadow(0 0 5px rgba(255, 80, 0, 0.8));  }
+    50%  { filter: drop-shadow(0 0 5px rgba(0, 200, 255, 0.8)); }
+    95%  { filter: drop-shadow(0 0 3px rgba(0, 200, 255, 0.8)); }
+    100% { filter: drop-shadow(0 0 3px rgba(255, 80, 0, 0.8));  }
+}
+
+.captured-area {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.captured-label {
+    font-size: 0.75rem;
+    font-family: var(--font-display);
+    white-space: nowrap;
+}
+
+.captured-pieces {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+}
+
+.captured-pip {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+}
+
+.captured-pip.fire {
+    background: radial-gradient(circle, #ff6a00, #cc2200);
+    box-shadow: 0 0 6px var(--fire-shadow-soft);
+}
+
+.captured-pip.ice {
+    background: radial-gradient(circle, #00eaff, #0077aa);
+    box-shadow: 0 0 6px var(--ice-shadow-soft);
+}
+
+/* ============================
+   VICTORY MODAL
+   ============================ */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 2.5rem 3rem;
+    text-align: center;
+    backdrop-filter: blur(30px);
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5);
+    animation: modalPop 0.5s ease-out;
+    max-width: 420px;
+    width: 90%;
+}
+
+@keyframes modalPop {
+    0% {
+        transform: scale(0.7);
+        opacity: 0;
+    }
+
+    70% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.victory-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.victory-title.fire-win {
+    background: linear-gradient(135deg, var(--fire-glow), #ffd700);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.victory-title.ice-win {
+    background: linear-gradient(135deg, var(--ice-glow), #ffd700);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.victory-message {
+    font-family: var(--font-fantasy);
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* ============================
+   RESPONSIVE — TABLETS
+   ============================ */
+@media (max-width: 700px) {
+    .game-title {
+        font-size: 2.4rem;
+    }
+
+    .game-subtitle {
+        font-size: 1rem;
+    }
+
+    .player-setup {
+        flex-direction: column;
+    }
+
+    .vs-divider {
+        padding: 0;
+    }
+
+    .player-card {
+        width: 260px;
+    }
+
+    .board {
+        width: min(92vw, 500px);
+        height: min(92vw, 500px);
+    }
+
+    .header-title {
+        display: none;
+    }
+
+    .game-header {
+        padding: 0.4rem 0.6rem;
+    }
+
+    .game-footer {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.3rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+    .piece.king::after {
+        font-size: 1em;
+    }
+
+    .hint-bar {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .victory-dragon-img {
+        width: 220px;
+        height: 220px;
+    }
+}
+
+/* ============================
+   RESPONSIVE — PHONES
+   ============================ */
+@media (max-width: 480px) {
+    body {
+        min-height: 100dvh;
+    }
+
+    .game-container {
+        min-height: 100dvh;
+        padding: 0;
+    }
+
+    .game-title {
+        font-size: 1.6rem;
+    }
+
+    .game-subtitle {
+        font-size: 0.8rem;
+    }
+
+    .splash-screen {
+        padding: 1rem;
+    }
+
+    .player-card {
+        width: 220px;
+        padding: 0.8rem;
+    }
+
+    .player-avatar {
+        width: 70px;
+        height: 70px;
+    }
+
+    .player-card h3 {
+        font-size: 1rem;
+    }
+
+    .btn-play {
+        font-size: 1.1rem;
+        padding: 0.8rem 2rem;
+    }
+
+    /* Board fills almost full width */
+    .board {
+        width: 95vw;
+        height: 95vw;
+    }
+
+    .board-container {
+        padding: 6px;
+    }
+
+    /* Compact header — prevent overflow */
+    .game-header {
+        padding: 0.25rem 0.4rem;
+        gap: 0.2rem;
+        overflow: hidden;
+    }
+
+    .player-info {
+        gap: 0.3rem;
+        min-width: 0;
+    }
+
+    .header-avatar {
+        width: 24px;
+        height: 24px;
+    }
+
+    .player-name {
+        font-size: 0.7rem;
+    }
+
+    .piece-count {
+        font-size: 0.6rem;
+    }
+
+    .turn-indicator {
+        font-size: 0.5rem;
+        padding: 0.1rem 0.3rem;
+    }
+
+    .game-center-info {
+        display: none;
+    }
+
+    /* Compact footer */
+    .game-footer {
+        padding: 0.2rem 0.3rem;
+        gap: 0.2rem;
+        font-size: 0.7rem;
+    }
+
+    .btn-action {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .captured-label {
+        font-size: 0.65rem;
+    }
+
+    /* Pieces touch-friendly */
+    .piece {
+        width: 85%;
+        height: 85%;
+    }
+
+    .piece.king::after {
+        font-size: 0.8em;
+    }
+
+    /* Victory modal on phone */
+    .modal-content {
+        width: 90vw;
+        padding: 1.2rem;
+    }
+
+    .victory-title {
+        font-size: 1.8rem;
+    }
+
+    .victory-message {
+        font-size: 0.85rem;
+    }
+
+    .modal-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .victory-dragon-img {
+        width: 160px;
+        height: 160px;
+    }
+}
+
+/* ============================
+   VICTORY DRAGON ANIMATION
+   ============================ */
+.victory-dragon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    z-index: 15;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.victory-dragon-img {
+    width: 320px;
+    height: 320px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 30px rgba(255, 100, 0, 0.8));
+}
+
+.breath-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 14;
+    pointer-events: none;
+}
+
+.victory-content {
+    z-index: 16;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: none;
+}
+
+/* Fire dragon flies in from left */
+.modal-overlay.active .victory-dragon.fire-dragon {
+    animation: dragonFlyInFire 1.8s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+
+.modal-overlay.active .victory-dragon.fire-dragon .victory-dragon-img {
+    filter: drop-shadow(0 0 40px rgba(255, 60, 0, 0.9)) drop-shadow(0 0 80px rgba(255, 30, 0, 0.5));
+}
+
+/* Ice dragon flies in from right */
+.modal-overlay.active .victory-dragon.ice-dragon {
+    animation: dragonFlyInIce 1.8s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+
+.modal-overlay.active .victory-dragon.ice-dragon .victory-dragon-img {
+    filter: drop-shadow(0 0 40px rgba(0, 180, 255, 0.9)) drop-shadow(0 0 80px rgba(0, 120, 255, 0.5));
+}
+
+/* Victory text appears after dragon lands */
+.modal-overlay.active .victory-content {
+    animation: victoryTextAppear 0.8s ease-out 2.5s forwards;
+}
+
+@keyframes dragonFlyInFire {
+    0% {
+        opacity: 0;
+        transform: translate(-250%, 100%) scale(0.3) rotate(-30deg);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translate(-100%, -20%) scale(0.6) rotate(-10deg);
+    }
+
+    60% {
+        transform: translate(-30%, -80%) scale(0.9) rotate(5deg);
+    }
+
+    80% {
+        transform: translate(-50%, -55%) scale(1.1) rotate(-2deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -65%) scale(1) rotate(0deg);
+    }
+}
+
+@keyframes dragonFlyInIce {
+    0% {
+        opacity: 0;
+        transform: translate(150%, 100%) scale(0.3) rotate(30deg);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translate(0%, -20%) scale(0.6) rotate(10deg);
+    }
+
+    60% {
+        transform: translate(-70%, -80%) scale(0.9) rotate(-5deg);
+    }
+
+    80% {
+        transform: translate(-50%, -55%) scale(1.1) rotate(2deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -65%) scale(1) rotate(0deg);
+    }
+}
+
+@keyframes victoryTextAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dragon hover after landing */
+.modal-overlay.active .victory-dragon {
+    animation-fill-mode: forwards;
+}
+
+.victory-dragon.landed {
+    animation: dragonHover 3s ease-in-out infinite !important;
+    opacity: 1 !important;
+    transform: translate(-50%, -65%) scale(1) rotate(0deg) !important;
+}
+
+@keyframes dragonHover {
+
+    0%,
+    100% {
+        transform: translate(-50%, -65%) scale(1) rotate(0deg);
+    }
+
+    50% {
+        transform: translate(-50%, -70%) scale(1.03) rotate(1deg);
+    }
+}
