@@ -49,7 +49,12 @@ function startGame() {
     document.getElementById('ice-player-name').textContent = iceName;
 
     initBoard();
-    currentPlayer = FIRE;
+    const firstTurnValue = document.querySelector('input[name="first-turn"]:checked')?.value || 'fire';
+    if (firstTurnValue === 'random') {
+        currentPlayer = Math.random() < 0.5 ? FIRE : ICE;
+    } else {
+        currentPlayer = firstTurnValue === 'ice' ? ICE : FIRE;
+    }
     selectedPiece = null;
     validMoves = [];
     moveHistory = [];
@@ -689,4 +694,3 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('rematch-btn').addEventListener('click', resetGame);
     document.getElementById('main-menu-btn').addEventListener('click', backToSplash);
 });
-
