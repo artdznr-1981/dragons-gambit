@@ -693,4 +693,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('undo-btn').addEventListener('click', undoMove);
     document.getElementById('rematch-btn').addEventListener('click', resetGame);
     document.getElementById('main-menu-btn').addEventListener('click', backToSplash);
+    document.getElementById('main-menu-game-btn').addEventListener('click', backToSplash);
 });
