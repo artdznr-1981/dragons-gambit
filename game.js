@@ -598,7 +598,7 @@ function updateHint() {
         hintIcon.textContent = '⚠️';
         hintText.textContent = `${playerName}: You must capture! Click a glowing piece that can jump.`;
     } else {
-        hintIcon.textContent = '💡';
+        hintIcon.textContent = currentPlayer === FIRE ? '🔥' : '❄️';
         hintText.textContent = `${playerName}: Click one of your pieces to select it.`;
     }
 }
