@@ -58,7 +58,7 @@
                     </label>
                     <label class="first-turn-option">
                         <input type="radio" name="first-turn" id="first-turn-random" value="random">
-                        <span class="option-pill random-pill">🎲 Random</span>
+                        <span class="option-pill random-pill"><span class="random-icon">🔥❄️</span> Random</span>
                     </label>
                     <label class="first-turn-option">
                         <input type="radio" name="first-turn" id="first-turn-ice" value="ice">
@@ -129,7 +129,10 @@
         </main>
 
         <footer class="game-footer">
-            <button id="new-battle-btn" class="btn-action">🔄 New Battle</button>
+            <div class="footer-left-btns">
+                <button id="new-battle-btn" class="btn-action">🔄 New Battle</button>
+                <button id="main-menu-game-btn" class="btn-action btn-menu">🏠 Menu</button>
+            </div>
             <div id="captured-fire" class="captured-area">
                 <span class="captured-label ice-text">❄️ Captured:</span>
                 <div id="captured-fire-pieces" class="captured-pieces"></div>
