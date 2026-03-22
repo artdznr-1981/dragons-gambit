@@ -679,7 +679,14 @@ function updateCapturedDisplay() {
     }
     animate();
 })();
-document.getElementById('start-btn').addEventListener('click', startGame);
-document.getElementById('rematch-btn').addEventListener('click', resetGame);
-document.getElementById('menu-btn').addEventListener('click', backToSplash);
+
+// ---- BUTTON EVENT LISTENERS ----
+// Wire up all buttons via addEventListener to comply with CSP (no inline onclick)
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('start-btn').addEventListener('click', startGame);
+    document.getElementById('new-battle-btn').addEventListener('click', resetGame);
+    document.getElementById('undo-btn').addEventListener('click', undoMove);
+    document.getElementById('rematch-btn').addEventListener('click', resetGame);
+    document.getElementById('main-menu-btn').addEventListener('click', backToSplash);
+});
 
