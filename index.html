@@ -110,7 +110,7 @@
         </main>
 
         <footer class="game-footer">
-            <button class="btn-action" onclick="resetGame()">🔄 New Battle</button>
+            <button id="new-battle-btn" class="btn-action">🔄 New Battle</button>
             <div id="captured-fire" class="captured-area">
                 <span class="captured-label ice-text">❄️ Captured:</span>
                 <div id="captured-fire-pieces" class="captured-pieces"></div>
@@ -119,7 +119,7 @@
                 <span class="captured-label fire-text">🔥 Captured:</span>
                 <div id="captured-ice-pieces" class="captured-pieces"></div>
             </div>
-            <button class="btn-action" onclick="undoMove()">↩️ Undo</button>
+            <button id="undo-btn" class="btn-action">↩️ Undo</button>
         </footer>
     </div>
 
@@ -137,7 +137,7 @@
             <p id="victory-message" class="victory-message"></p>
             <div class="modal-buttons">
                 <button id="rematch-btn" class="btn-action">⚔️ Rematch</button>
-                <button id="menu-btn" class="btn-action">🏠 Main Menu</button>
+                <button id="main-menu-btn" class="btn-action">🏠 Main Menu</button>
             </div>
         </div>
     </div>
@@ -145,6 +145,4 @@
     <script src="game.js"></script>
 </body>
 
-
 </html>
-
