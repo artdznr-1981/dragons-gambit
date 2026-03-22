@@ -258,6 +258,78 @@ body::before {
     padding: 0 0.5rem;
 }
 
+/* Who Goes First */
+.first-turn-selector {
+    margin-bottom: 1.8em;
+    text-align: center;
+}
+
+.first-turn-label {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffd700;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+}
+
+.first-turn-options {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.first-turn-option {
+    cursor: pointer;
+}
+
+.first-turn-option input[type="radio"] {
+    display: none;
+}
+
+.option-pill {
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border: 2px solid transparent;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+    transition: all 0.25s ease;
+    user-select: none;
+}
+
+.option-pill:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-primary);
+}
+
+.first-turn-option input[type="radio"]:checked + .fire-pill {
+    background: rgba(255, 69, 0, 0.2);
+    border-color: var(--fire-primary);
+    color: var(--fire-glow);
+    box-shadow: 0 0 18px var(--fire-shadow-soft);
+}
+
+.first-turn-option input[type="radio"]:checked + .random-pill {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: #ffd700;
+    color: #ffd700;
+    box-shadow: 0 0 18px rgba(255, 215, 0, 0.25);
+}
+
+.first-turn-option input[type="radio"]:checked + .ice-pill {
+    background: rgba(0, 212, 255, 0.15);
+    border-color: var(--ice-primary);
+    color: var(--ice-glow);
+    box-shadow: 0 0 18px var(--ice-shadow-soft);
+}
+
 .btn-start {
     font-family: var(--font-display);
     font-size: 1.3rem;
